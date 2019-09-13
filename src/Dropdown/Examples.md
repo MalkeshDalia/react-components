@@ -155,6 +155,39 @@ const options = [
 />;
 ```
 
+#### Multiselect with "select all" option
+
+When the dropdown is in "multi" mode, it's possible to automatically add an "all" option that will select all the available options at once.
+
+```js
+intialState = {};
+
+const onChange = value => setState({ value });
+const onSelectAllChange = isSelected => setState({ isSelectAll: isSelected });
+
+const options = [
+  { value: "apple", label: "Apple" },
+  { value: "avocado", label: "Avocado" },
+  { value: "orange", label: "Orange" },
+  { value: "lemon", label: "Lemon" },
+  { value: "mandarin", label: "Mandarin" }
+];
+
+<Dropdown
+  type="multi-clearable"
+  className="custom"
+  value={state.value}
+  onChange={onChange}
+  placeholder="Select some fruit(s)"
+  options={options}
+  selectAll={{
+    option: { value: "all", label: "ALL" },
+    onSelectedChange: onSelectAllChange,
+    isSelected: state.isSelectAll
+  }}
+/>;
+```
+
 #### Groups
 
 Dropdown could also allow the grouping

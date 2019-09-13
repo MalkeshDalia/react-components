@@ -36,7 +36,7 @@ export namespace DropdownField {
 export class DropdownField<OptionType> extends React.PureComponent<
   InternalProps<OptionType>
 > {
-  static defaultProps: DefaultProps<any> = {
+  static defaultProps: DefaultProps<unknown> = {
     dropdownRenderer: props => <Dropdown {...props} />
   };
 
