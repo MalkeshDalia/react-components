@@ -58,6 +58,10 @@ export class Dropdown<OptionType> extends React.Component<
     menuPlacement: "bottom"
   };
 
+  defaultComponents: InternalProps<OptionType>["components"] = {
+    IndicatorSeparator: () => null
+  };
+
   getSelectAllProps = (): Pick<
     Props<OptionType>,
     "options" | "components" | "onChange"
@@ -68,7 +72,7 @@ export class Dropdown<OptionType> extends React.Component<
     ) {
       return getSelectAllProps<OptionType>(
         this.props.options || [],
-        this.props.components || {},
+        { ...this.defaultComponents, ...this.props.components },
         this.props.selectAll,
         this.props.onChange
       );
@@ -112,7 +116,14 @@ export class Dropdown<OptionType> extends React.Component<
 
   render() {
     const {
-      props: { className, innerRef, type, allowCreate, ...props }
+      props: {
+        className,
+        components: customComponents,
+        innerRef,
+        type,
+        allowCreate,
+        ...props
+      }
     } = this;
 
     const Component: React.ComponentType<Props<OptionType>> = allowCreate
@@ -125,6 +136,10 @@ export class Dropdown<OptionType> extends React.Component<
           input: () => ({ margin: 0, padding: 0 })
         }}
         {...props}
+        components={{
+          ...this.defaultComponents,
+          ...customComponents
+        }}
         {...this.getSelectAllProps()}
         classNamePrefix="dropdown"
         className={cx("dropdown", className, this.getCustomClassNames())}
