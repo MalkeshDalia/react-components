@@ -2,8 +2,8 @@ import * as React from "react";
 import { ContainerProps } from "react-select/lib/components/containers";
 import { components } from "react-select";
 import { SelectComponentsConfig } from "react-select/lib/components";
-import { OptionProps } from "react-select/lib/components/Option";
-import { getOptionValue, getOptionLabel } from "react-select/lib/builtins";
+import { getOptionLabel, getOptionValue } from "react-select/lib/builtins";
+import { GroupType } from "react-select/lib/types";
 
 export type SelectAllPropsType<OptionType> = {
   option: OptionType;
@@ -32,33 +32,59 @@ const ValueContainerWithSelectAll = <OptionType extends {}>(
   );
 };
 
-const Option = <OptionType extends {}>(
-  selectAll: SelectAllPropsType<OptionType>
-) => ({ children, ...props }: OptionProps<OptionType>) => {
-  return (
-    <components.Option
-      {...props}
-      innerProps={{
-        ...props.innerProps,
-        onClick: e => {
-          selectAll.onSelectedChange(
-            getOptionValue(props.data) === getOptionValue(selectAll.option)
-          );
-          props.innerProps.onClick(e);
-          if (getOptionValue(props.data) === getOptionValue(selectAll.option)) {
-            props.clearValue();
-          }
-        }
-      }}
-    >
-      {children}
-    </components.Option>
-  );
+const isOptionGroupArray = <OptionType extends {}>(
+  options: GroupType<OptionType>[] | OptionType[]
+): options is GroupType<OptionType>[] => {
+  return options.length > 0 && options[0].hasOwnProperty("options");
 };
 
-export const defaultSelectAllComponents = <OptionType extends {}>(
-  selectAll: SelectAllPropsType<OptionType>
-): SelectComponentsConfig<OptionType> => ({
-  ValueContainer: ValueContainerWithSelectAll<OptionType>(selectAll),
-  Option: Option(selectAll)
-});
+const optionsToGroups = <OptionType extends {}>(
+  options: GroupType<OptionType>[] | OptionType[]
+): GroupType<OptionType>[] => {
+  return isOptionGroupArray(options)
+    ? options
+    : [
+        {
+          options
+        }
+      ];
+};
+
+export const getSelectAllProps = <OptionType extends {}>(
+  options: OptionType[] | GroupType<OptionType>[],
+  customComponents: SelectComponentsConfig<OptionType>,
+  selectAll: SelectAllPropsType<OptionType>,
+  onChange: (newValues: OptionType[]) => void
+) => {
+  // react-select can't accept a mix of OptionType and OptionGroup<OptionType>.
+  // In case a "selectAll" option must be added, every spare option is added to an unlabelled OptionGroup
+  const optionGroups: GroupType<OptionType>[] = optionsToGroups(options);
+
+  const onChangeWithSelectAll = (newValues: OptionType[]) => {
+    const allSelected = newValues.some(
+      o => getOptionValue(o) === getOptionValue(selectAll.option)
+    );
+
+    if (allSelected) {
+      onChange([]);
+      selectAll.onSelectedChange(true);
+    } else {
+      onChange(newValues);
+      selectAll.onSelectedChange(false);
+    }
+  };
+
+  return {
+    options: [
+      {
+        options: [selectAll.option]
+      },
+      ...optionGroups
+    ],
+    components: {
+      ValueContainer: ValueContainerWithSelectAll<OptionType>(selectAll),
+      ...customComponents
+    },
+    onChange: onChangeWithSelectAll
+  };
+};

@@ -5,12 +5,7 @@ import * as SelectNS from "react-select/lib/Select";
 import * as cx from "classnames";
 import { ObjectOmit } from "../utils";
 import { CreatableProps, Props } from "react-select/lib/Creatable";
-import {
-  defaultSelectAllComponents,
-  SelectAllPropsType
-} from "./selectAllUtils";
-import { GroupType } from "react-select/lib/types";
-import { SelectComponentsConfig } from "react-select/lib/components";
+import { SelectAllPropsType, getSelectAllProps } from "./selectAllUtils";
 
 type DefaultProps = {
   delimiter: NonNullable<SelectNS.Props["delimiter"]>;
@@ -53,12 +48,6 @@ type NonDefaultProps<OptionType> = ObjectOmit<
 
 type InternalProps<OptionType> = DefaultProps & NonDefaultProps<OptionType>;
 
-const isOptionGroupArray = <OptionType extends {}>(
-  options: GroupType<OptionType>[] | OptionType[]
-): options is GroupType<OptionType>[] => {
-  return options.length > 0 && options[0].hasOwnProperty("options");
-};
-
 export class Dropdown<OptionType> extends React.Component<
   InternalProps<OptionType>
 > {
@@ -69,40 +58,22 @@ export class Dropdown<OptionType> extends React.Component<
     menuPlacement: "bottom"
   };
 
-  getSelectAllProps = (
-    selectAll: SelectAllPropsType<OptionType>
-  ): Pick<Props<OptionType>, "options" | "components" | "onChange"> => {
-    const optionGroups: GroupType<OptionType>[] =
-      this.props.options && isOptionGroupArray(this.props.options)
-        ? this.props.options
-        : [
-            {
-              options: this.props.options || []
-            }
-          ];
-
-    return {
-      options: [
-        {
-          options: [selectAll.option]
-        },
-        ...optionGroups
-      ],
-      components: {
-        ...defaultSelectAllComponents(selectAll),
-        ...this.props.components
-      }
-    };
-  };
-
-  getComponents = (): SelectComponentsConfig<OptionType> | undefined => {
+  getSelectAllProps = (): Pick<
+    Props<OptionType>,
+    "options" | "components" | "onChange"
+  > => {
     if (
       (this.props.type === "multi" || this.props.type === "multi-clearable") &&
       this.props.selectAll
     ) {
-      return;
+      return getSelectAllProps<OptionType>(
+        this.props.options || [],
+        this.props.components || {},
+        this.props.selectAll,
+        this.props.onChange
+      );
     } else {
-      return this.props.components;
+      return {};
     }
   };
 
@@ -148,19 +119,13 @@ export class Dropdown<OptionType> extends React.Component<
       ? Creatable
       : Select;
 
-    const selectAllProps =
-      (this.props.type === "multi" || this.props.type === "multi-clearable") &&
-      this.props.selectAll
-        ? this.getSelectAllProps(this.props.selectAll)
-        : {};
-
     return (
       <Component
         styles={{
           input: () => ({ margin: 0, padding: 0 })
         }}
         {...props}
-        {...selectAllProps}
+        {...this.getSelectAllProps()}
         classNamePrefix="dropdown"
         className={cx("dropdown", className, this.getCustomClassNames())}
         ref={innerRef}
