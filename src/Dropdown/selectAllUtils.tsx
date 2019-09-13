@@ -3,6 +3,7 @@ import { ContainerProps } from "react-select/lib/components/containers";
 import { components } from "react-select";
 import { SelectComponentsConfig } from "react-select/lib/components";
 import { OptionProps } from "react-select/lib/components/Option";
+import { getOptionValue, getOptionLabel } from "react-select/lib/builtins";
 
 export type SelectAllPropsType<OptionType> = {
   option: OptionType;
@@ -22,7 +23,7 @@ const ValueContainerWithSelectAll = <OptionType extends {}>(
           innerProps={{}}
           isDisabled={false}
         >
-          {selectAll.option["label"]}
+          {getOptionLabel(selectAll.option)}
         </components.SingleValue>
       ) : (
         children
@@ -40,9 +41,11 @@ const Option = <OptionType extends {}>(
       innerProps={{
         ...props.innerProps,
         onClick: e => {
-          selectAll.onSelectedChange(props.data === selectAll.option);
+          selectAll.onSelectedChange(
+            getOptionValue(props.data) === getOptionValue(selectAll.option)
+          );
           props.innerProps.onClick(e);
-          if (props.data === selectAll.option) {
+          if (getOptionValue(props.data) === getOptionValue(selectAll.option)) {
             props.clearValue();
           }
         }
