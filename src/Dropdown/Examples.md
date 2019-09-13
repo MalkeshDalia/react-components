@@ -19,7 +19,7 @@ const options = [
   onChange={onChange}
   placeholder="Select some fruit"
   options={options}
-/>;
+/>
 ```
 
 #### Dropdowns sizes
@@ -64,7 +64,7 @@ const options2 = [
     options={options2}
     size="small"
   />
-</FlexView>;
+</FlexView>
 ```
 
 #### Menu position
@@ -91,7 +91,7 @@ const options = [
   placeholder="Select some fruit"
   options={options}
   menuPlacement="top"
-/>;
+/>
 ```
 
 #### Dropdowns options
@@ -125,7 +125,7 @@ const options = [
   backspaceRemovesValue
   placeholder="Select some fruit (try to type 'Banana')"
   options={options}
-/>;
+/>
 ```
 
 #### Multiselect
@@ -152,7 +152,7 @@ const options = [
   onChange={onChange}
   placeholder="Select some fruit(s)"
   options={options}
-/>;
+/>
 ```
 
 #### Multiselect with "select all" option
@@ -185,7 +185,7 @@ const options = [
     onSelectedChange: onSelectAllChange,
     isSelected: state.isSelectAll
   }}
-/>;
+/>
 ```
 
 #### Groups
@@ -229,5 +229,5 @@ const options = [
   isSearchable
   placeholder="Select some fruit (try to type 'Banana')"
   options={options}
-/>;
+/>
 ```
