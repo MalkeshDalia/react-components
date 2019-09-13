@@ -50,6 +50,8 @@ Array [
   "Dropdown/examples.css",
   "Dropdown/index.d.ts",
   "Dropdown/index.js",
+  "Dropdown/selectAllUtils.d.ts",
+  "Dropdown/selectAllUtils.js",
   "FocusableView/FocusableView.d.ts",
   "FocusableView/FocusableView.js",
   "FocusableView/index.d.ts",

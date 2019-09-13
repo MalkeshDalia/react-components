@@ -34,6 +34,9 @@ exports[`Dropdown renders correctly 1`] = `
     <div
       className="css-1wy0on6 dropdown__indicators"
     >
+      <span
+        className="css-d8oujb dropdown__indicator-separator"
+      />
       <div
         aria-hidden="true"
         className="css-1ep9fjw dropdown__indicator dropdown__dropdown-indicator"
